@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <button onclick="onshowdata()">HIT API</button>
+    <script src="
+https://cdn.jsdelivr.net/npm/axios@1.8.1/dist/axios.min.js
+"></script>
+    <script>
+        const onshowdata = () => {
+
+            let data = JSON.stringify({
+                "id": 2,
+                "name": "aliasdasd",
+                "email": "testasdasdawdasdas"
+            });
+
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: 'http://127.0.0.1:5000/',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios.request(config)
+                .then((response) => {
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+        }
+    </script>
+</body>
+
+</html>
