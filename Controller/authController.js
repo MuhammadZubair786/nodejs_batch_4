@@ -2,6 +2,12 @@ const authModel = require("../Models/authModel")
 const userValidate = require("../Validator/authValidate")
 const nodemailer = require("nodemailer");
 const brcypt = require("bcrypt")
+const JWT = require("jsonwebtoken")
+require('dotenv').config()
+
+const sk = process.env.jwtSecret
+
+
 exports.signUp = async (req, res) => {
     try {
 
@@ -29,12 +35,12 @@ exports.signUp = async (req, res) => {
             })
         }
 
-        const hashPassword = await brcypt.hash(password,12)
-        req.body.password=hashPassword
+        const hashPassword = await brcypt.hash(password, 12)
+        req.body.password = hashPassword
 
-        const otp = Math.floor(Math.random()*90000)
-        req.body.otpCode=otp
-        
+        const otp = Math.floor(Math.random() * 90000)
+        req.body.otpCode = otp
+
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -73,11 +79,12 @@ exports.signUp = async (req, res) => {
         var user = authModel(req.body)
         user.save()
 
-
+        var token = JWT.sign({ _id: user._id }, sk, { expiresIn: '2h' })
 
         return res.status(200).json({
             message: "USER STORE",
-            data: user
+            data: user,
+            token
         })
 
     }
@@ -87,4 +94,46 @@ exports.signUp = async (req, res) => {
         })
 
     }
+}
+
+exports.verifyOtp = async (req, res) => {
+    try {
+        const { otp } = req.body
+        if (!otp) {
+            return res.status(400).json({
+                message: "enter otp code"
+            })
+        }
+
+        let user = await authModel.findById(req._id)
+        if (!user) {
+            return res.status(400).json({
+                message: "user not found"
+            })
+
+        }
+
+        if (user.otpCode != otp) {
+            return res.status(400).json({
+                message: "invalid otp"
+            })
+        }
+
+        var userUpdate = await authModel.findByIdAndUpdate(req._id, {
+            verify: true
+        })
+        return res.status(200).json({
+            message: "user verify succvessfully",
+            data: userUpdate
+        })
+
+
+    } catch (e) {
+        return res.status(400).json({
+            message: "ERROR",
+
+        })
+
+    }
+
 }
