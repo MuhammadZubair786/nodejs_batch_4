@@ -20,7 +20,12 @@ const authSchema = new mongoose.Schema({
         type:String,
         required:true,
         default:""
-    }
+    },
+     profileId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "profile",
+        required: false,
+      },
    
 })
 
