@@ -229,9 +229,12 @@ exports.login = async (req, res) => {
         });
       }
 
+      var token = JWT.sign({ _id: userCheck._id }, sk, { expiresIn: "2h" });
+
       return res.status(200).json({
         message: "login",
         data: userCheck,
+        token
       });
     }
   } catch (e) {}
