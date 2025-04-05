@@ -14,7 +14,7 @@ exports.authMiddleWare = (req, res, next) => {
 
             }
             req._id=decoded._id
-            console.log(decoded) // bar
+            console.log(decoded,"test") // bar
         });
         next()
     }

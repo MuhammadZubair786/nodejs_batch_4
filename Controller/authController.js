@@ -166,7 +166,7 @@ exports.completeProfile = async (req, res) => {
           age: req.body.age,
           gender: req.body.gender,
           image: result.secure_url,
-          authId: req._id,
+          authId: req._id, //auth
         };
 
         var profileData = await profilemodel(body);
@@ -177,7 +177,7 @@ exports.completeProfile = async (req, res) => {
             _id: req._id,
           },
           {
-            profileId: profileData._id,
+            profileId: profileData._id, //
           }
         );
 
