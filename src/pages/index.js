@@ -1,113 +1,136 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
+"use client"
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 export default function Home() {
+
+  const [todo, setTodo] = useState([])
+  const [title, settitle] = useState("")
+  const [new1, setNew1] = useState(true)
+  const [currentId, setcurrentId] = useState("")
+
+  useEffect(() => {
+    getTodo()
+  }, [])
+
+  const addTodo = async () => {
+
+    const myHeaders = {
+      Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2RlOTU5MmUzODJlZDY2M2IzY2M0MDUiLCJpYXQiOjE3NDM5NDYwMDksImV4cCI6MTc0Mzk1MzIwOX0.x34A1RhcCI3casRtpE-xcO_yhN0LM_ZvNNVIAHyEcNU",
+      "Content-Type": "application/json"
+    };
+
+    const response = await axios.post(
+      "http://localhost:5000/todo/create",
+      { title: title }, // Request body
+      { headers: myHeaders } // Config with headers
+    );
+    console.log(response)
+    settitle("")
+
+    getTodo()
+
+  }
+
+  const getTodo = async () => {
+
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2RlOTU5MmUzODJlZDY2M2IzY2M0MDUiLCJpYXQiOjE3NDM5NDYwMDksImV4cCI6MTc0Mzk1MzIwOX0.x34A1RhcCI3casRtpE-xcO_yhN0LM_ZvNNVIAHyEcNU");
+    var response = await axios.get("http://localhost:5000/todo/get", {
+      headers: myHeaders
+    })
+    console.log(response.data.data)
+    setTodo(response.data.data)
+
+  }
+
+  const editTodo = (data) => {
+    console.log(data)
+    setNew1(false)
+    settitle(data.title)
+    setcurrentId(data._id)
+
+
+  }
+
+  const updateTodo = async () => {
+
+    const myHeaders = {
+      Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2RlOTU5MmUzODJlZDY2M2IzY2M0MDUiLCJpYXQiOjE3NDM5NDYwMDksImV4cCI6MTc0Mzk1MzIwOX0.x34A1RhcCI3casRtpE-xcO_yhN0LM_ZvNNVIAHyEcNU",
+      "Content-Type": "application/json"
+    };
+
+    const response = await axios.put(
+      `http://localhost:5000/todo/update/${currentId}`,
+      { title: title }, // Request body
+      { headers: myHeaders } // Config with headers
+    );
+    console.log(response)
+    setNew1(true)
+    settitle("")
+    getTodo()
+
+  }
+
+  const deleteTodo = async (id) => {
+
+    const myHeaders = {
+      Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2RlOTU5MmUzODJlZDY2M2IzY2M0MDUiLCJpYXQiOjE3NDM5NDYwMDksImV4cCI6MTc0Mzk1MzIwOX0.x34A1RhcCI3casRtpE-xcO_yhN0LM_ZvNNVIAHyEcNU",
+      "Content-Type": "application/json"
+    };
+
+    const response = await axios.delete(
+      `http://localhost:5000/todo/delete/${id}`,
+     
+      { headers: myHeaders } // Config with headers
+    );
+    console.log(response)
+    getTodo()
+
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/pages/index.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <>
+      <h1>Hello next js</h1>
+      <input type="text" placeholder="enter todos" value={title} onChange={(e) => settitle(e.target.value)} />
+      {
+        new1 ?
+          <button onClick={() => addTodo()}>Submit</button> :
+          <button onClick={() => updateTodo()}>Update Todo</button>
+      }
+
+
+
+      {
+        todo.map((v, i) => {
+          return (
+            <div key={i}>
+              <h3 style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                {i + 1}
+                <b
+                  style={{
+                    width: "40%",
+                    display: "inline-block",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  {v.title}
+                </b>
+                <button style={{ border: "1px solid red", marginLeft: "20px" }}
+                  onClick={() => editTodo(v)}
+                >Edit</button>
+                  <button style={{ border: "1px solid red", marginLeft: "20px" }}
+                  onClick={() => deleteTodo(v._id)}
+                >Delete</button>
+              </h3>
+
+            </div>
+          )
+        })
+
+      }
+    </>
+
   );
 }
