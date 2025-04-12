@@ -26,6 +26,10 @@ const authSchema = new mongoose.Schema({
         ref: "profile",
         required: false,
       },
+      userType:{
+        type:String,
+        required:true
+      }
    
 })
 

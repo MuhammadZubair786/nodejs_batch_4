@@ -3,10 +3,13 @@ const userValidate = require("../Validator/authValidate");
 const nodemailer = require("nodemailer");
 const brcypt = require("bcrypt");
 const JWT = require("jsonwebtoken");
+const mongoose = require("mongoose")
+const ObjectId = mongoose.Types.ObjectId;
 require("dotenv").config();
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier"); //read buffer format,
 const profilemodel = require("../Models/profilemodel");
+const { isValidObjectId } = require("mongoose");
 
 // 1000byte
 
@@ -72,6 +75,7 @@ exports.signUp = async (req, res) => {
       } else {
       }
     });
+    req.body.userType="user"
 
     var user = authModel(req.body);
     user.save();
@@ -237,5 +241,114 @@ exports.login = async (req, res) => {
         token
       });
     }
-  } catch (e) {}
+  } catch (e) { }
 };
+
+exports.getUserTodos = async (req, res) => {
+  // try {
+    // var userId = "67de9592e382ed663b3cc405";
+    // var piplines = [
+    //   {
+    //     '$lookup': {
+    //       'from': 'todos', 
+    //       'localField': '_id', 
+    //       'foreignField': 'userId', 
+    //       'as': 'result'
+    //     }
+    //   }
+      
+    // ]
+
+    // var piplines=[
+    //   {
+    //     '$match': {
+    //      "_id":new ObjectId(req._id)
+    //     }
+    //   }, {
+    //     '$lookup': {
+    //       'from': 'todos', 
+    //       'localField': '_id', 
+    //       'foreignField': 'userId', 
+    //       'as': 'result'
+    //     }
+    //   }
+    // ]
+
+    // var piplines =[
+    //   {
+    //     '$match': {
+    //       '_id': new ObjectId('67de9592e382ed663b3cc405')
+    //     }
+    //   }, {
+    //     '$lookup': {
+    //       'from': 'todos', 
+    //       'localField': '_id', 
+    //       'foreignField': 'userId', 
+    //       'as': 'result'
+    //     }
+    //   }, {
+    //     '$lookup': {
+    //       'from': 'profiles', 
+    //       'localField': '_id', 
+    //       'foreignField': 'authId', 
+    //       'as': 'profile'
+    //     }
+    //   }, {
+    //     '$unwind': {
+    //       'path': '$profile'
+    //     }
+    //   }
+    // ]
+
+    // var piplines =[
+    //   {
+    //     '$match': {
+    //       '_id': new ObjectId(req._id)
+    //     }
+    //   }, {
+    //     '$lookup': {
+    //       'from': 'profiles', 
+    //       'localField': '_id', 
+    //       'foreignField': 'authId', 
+    //       'as': 'profile'
+    //     }
+    //   }, {
+    //     '$unwind': {
+    //       'path': '$profile'
+    //     }
+    //   }, {
+    //     '$lookup': {
+    //       'from': 'todos', 
+    //       'localField': '_id', 
+    //       'foreignField': 'userId', 
+    //       'as': 'todos'
+    //     }
+    //   }, {
+    //     '$project': {
+    //       'email': 1, 
+    //       'todos': 1, 
+    //       'profile.age': 1, 
+    //       'profile.image': 1
+    //     }
+    //   }, {
+    //     '$addFields': {
+    //       'totalTodos': {
+    //         '$size': '$todos'
+    //       }
+    //     }
+    //   }
+    // ]
+
+    var user = await authModel.aggregate(piplines)
+    res.status(200).json({
+      data: user,
+      message:"test"
+
+    })
+
+  // }
+  // catch (e) {
+
+  // }
+
+}

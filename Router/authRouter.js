@@ -11,6 +11,8 @@ router.post("/signup",authContrller.signUp)
 router.post("/verifyOtp",authMiddleWare,authContrller.verifyOtp)
 router.post("/completeProfile",authMiddleWare,upload.single("image"),authContrller.completeProfile)
 router.post("/login",authContrller.login)
+router.post("/todos",authMiddleWare,authContrller.getUserTodos)
+
 
 module.exports=router
 

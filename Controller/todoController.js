@@ -2,7 +2,8 @@
 const { populate } = require("../Models/authModel");
 const todosModel = require("../Models/todosModel");
 const titleValidate = require("../Validator/todoValidate");
-
+const mongoose = require("mongoose")
+const ObjectId = mongoose.Types.ObjectId;
 exports.createTodo = async (req, res) => {
   try {
     const todoCheck = await titleValidate.validate(req.body);
@@ -13,6 +14,9 @@ exports.createTodo = async (req, res) => {
         status: false,
       });
     }
+
+    console.log(req._id)
+    console.log("******")
 
     req.body.userId = req._id;
 
@@ -87,6 +91,36 @@ exports.updateTodo = async (req, res) => {
 
   }
   catch (E) {
+
+  }
+}
+
+exports.searchApi=async(req,res)=>{
+  try{
+    const {title}= req.body
+    
+
+    const piplines = [
+      {
+        '$match': {
+          'userId': new ObjectId(req._id), 
+          'title': {
+            '$eq':title
+          }
+        }
+      }
+    ]
+
+    const todos = await todosModel.aggregate(piplines)
+    res.status(200).json({
+      message:"get",
+      data : todos
+    })
+
+
+
+  }
+  catch(e){
 
   }
 }
